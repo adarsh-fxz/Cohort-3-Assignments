@@ -116,12 +116,45 @@ router.delete('/:id', adminMiddleware, async (req, res) => {
 });
 
 
-router.get('/', adminMiddleware, (req, res) => {
+router.get('/', adminMiddleware, async (req, res) => {
     // Implement fetching all todo logic
+    try {
+        const todos = await Todo.find({
+            userId: req.userId
+        });
+
+        res.json({
+            todos
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Server error"
+        });
+    }
+
 });
 
-router.get('/:id', adminMiddleware, (req, res) => {
+router.get('/:id', adminMiddleware, async (req, res) => {
     // Implement fetching todo by id logic
+    try {
+        const userId = req.userId;
+        const todoId = req.params.id;
+
+        const todo = await Todo.findOne({
+            userId: userId,
+            _id: todoId
+        });
+
+        res.json({
+            todo
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Server error"
+        });
+    }
 });
 
 module.exports = router;
