@@ -46,16 +46,73 @@ router.post('/', async (req, res) => {
 
 });
 
-router.put('/', adminMiddleware, (req, res) => {
+router.put('/', adminMiddleware, async (req, res) => {
     // Implement update todo  logic
+    try {
+        const userId = req.userId;
+        const todoId = req.headers.todoid;
+        const { title, description, status } = req.body;
+
+        const todo = await Todo.updateOne({
+            userId: userId,
+            _id: todoId
+        }, {
+            title,
+            description,
+            status
+        })
+
+        res.json({
+            message: "Todo updated successfully"
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Server error"
+        });
+    }
 });
 
-router.delete('/', adminMiddleware, (req, res) => {
+router.delete('/', adminMiddleware, async (req, res) => {
     // Implement delete todo logic
+    try {
+        const userId = req.userId;
+        const todoId = req.headers.todoid;
+
+        const todo = await Todo.deleteOne({
+            userId: userId,
+            _id: todoId
+        });
+
+        res.json({
+            message: "Todo deleted successfully"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Server error"
+        });
+    }
 });
 
-router.delete('/:id', adminMiddleware, (req, res) => {
+router.delete('/:id', adminMiddleware, async (req, res) => {
     // Implement delete todo by id logic
+    try {
+        const userId = req.userId;
+        const todoId = req.params.id;
+
+        const todo = await Todo.deleteOne({
+            userId: userId,
+            _id: todoId
+        });
+
+        res.json({
+            message: "Todo deleted successfully"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Server error"
+        });
+    }
 });
 
 
