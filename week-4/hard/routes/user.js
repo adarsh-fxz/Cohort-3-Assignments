@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const router = Router();
 const userMiddleware = require("../middleware/user");
-const { User } = require("../database");
+const { User, Todo } = require("../database");
 const { validateSignupData, hashPassword } = require("../auth");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -73,12 +73,35 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.get('/todos', userMiddleware, (req, res) => {
+router.get('/todos', userMiddleware, async (req, res) => {
     // Implement logic for getting todos for a user
+    try {
+        const todos = await Todo.find({
+            userId: req.userId
+        });
+
+        res.json({
+            todos
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Server error"
+        });
+    }
 });
 
 router.post('/logout', userMiddleware, (req, res) => {
     // Implement logout logic
+    try {
+        res.json({
+            message: "Logged out successfully"
+        }); 
+    } catch (error) {
+        return res.status(500).json({
+            message: "Server error"
+        });
+    }
 });
 
 module.exports = router
